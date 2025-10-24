@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Moodify</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="mood-overlay"></div>
+    
+    <div class="login-page" style="display: flex;">
+        <div class="login-container">
+            <h2>Welcome Back</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <!-- Added message div for feedback -->
+                <div id="message" class="message"></div>
+                <button type="submit" class="login-button">Login</button>
+            </form>
+            <div class="signup-link">
+                Don't have an account? <a href="signup.html">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const messageDiv = document.getElementById('message');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Log the attempt
+            console.log('Attempting to login with email:', email);
+            
+            messageDiv.textContent = 'Attempting to connect...';
+            messageDiv.style.color = 'blue';
+
+            try {
+                console.log('Making fetch request...');
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Adding CORS headers on the client side
+                        'Accept': 'application/json',
+                    },
+                    credentials: 'include', // Include credentials if you're using cookies
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                });
+
+                console.log('Response received:', response.status);
+                const data = await response.json();
+                console.log('Data received:', data);
+
+                if (response.ok) {
+                    messageDiv.textContent = 'Login successful! Redirecting...';
+                    messageDiv.style.color = 'green';
+                    
+                    // Store the token if your backend sends one
+                    if (data.token) {
+                        localStorage.setItem('token', data.token);
+                        console.log('Token stored in localStorage');
+                    }
+                    
+                    // Store user data if needed
+                    if (data.user) {
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        console.log('User data stored in localStorage');
+                    }
+
+                    // Redirect to the dashboard or home page
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                } else {
+                    messageDiv.textContent = data.message || 'Invalid email or password';
+                    messageDiv.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Detailed error:', error);
+                messageDiv.textContent = `Connection error: ${error.message}`;
+                messageDiv.style.color = 'red';
+            }
+        }
+    </script>
+</body>
+</html>

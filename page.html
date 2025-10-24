@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodify - Turn Boredom into Productive Fun</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mood-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(26, 26, 46, 0.8) 100%);
+            pointer-events: none;
+        }
+
+        .container {
+            text-align: center;
+            color: white;
+            z-index: 10;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #a855f7, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+            position: relative;
+        }
+
+        .emoji-ring {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .emoji {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.7;
+            transform-origin: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Position emojis in a circle */
+        .emoji:nth-child(1) { transform: rotate(0deg) translateX(200px) rotate(-0deg); }
+        .emoji:nth-child(2) { transform: rotate(60deg) translateX(200px) rotate(-60deg); }
+        .emoji:nth-child(3) { transform: rotate(120deg) translateX(200px) rotate(-120deg); }
+        .emoji:nth-child(4) { transform: rotate(180deg) translateX(200px) rotate(-180deg); }
+        .emoji:nth-child(5) { transform: rotate(240deg) translateX(200px) rotate(-240deg); }
+        .emoji:nth-child(6) { transform: rotate(300deg) translateX(200px) rotate(-300deg); }
+
+        .mood-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(168, 85, 247, 0.4), rgba(59, 130, 246, 0.1));
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+            animation: bubble-float 6s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .mood-bubble:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Position mood bubbles */
+        .mood-bubble:nth-child(1) { top: 20%; left: 15%; width: 100px; height: 100px; animation-delay: 0s; }
+        .mood-bubble:nth-child(2) { top: 60%; left: 10%; width: 80px; height: 80px; animation-delay: 1s; }
+        .mood-bubble:nth-child(3) { top: 30%; right: 15%; width: 90px; height: 90px; animation-delay: 2s; }
+        .mood-bubble:nth-child(4) { top: 70%; right: 20%; width: 110px; height: 110px; animation-delay: 1.5s; }
+
+        .gaming-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .controller {
+            width: 150px;
+            height: 150px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 6H3a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/><circle cx="7" cy="12" r="1"/><circle cx="11" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg>');
+            background-repeat: no-repeat;
+            position: absolute;
+            left: 10%;
+            bottom: 20%;
+            animation: floatController 8s infinite ease-in-out;
+            filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
+        }
+
+        .headset {
+            width: 120px;
+            height: 120px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>');
+            background-repeat: no-repeat;
+            position: absolute;
+            right: 15%;
+            top: 25%;
+            animation: floatHeadset 7s infinite ease-in-out;
+            filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #e2e8f0;
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-button {
+            padding: 1.2rem 2.5rem;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, #a855f7, #3b82f6);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+        }
+
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.05)
+            );
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover::after {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes bubble-float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        @keyframes floatController {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -20px) rotate(5deg); }
+            50% { transform: translate(0, -40px) rotate(0deg); }
+            75% { transform: translate(-20px, -20px) rotate(-5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        @keyframes floatHeadset {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            33% { transform: translate(-25px, -25px) rotate(-5deg) scale(1.1); }
+            66% { transform: translate(25px, -35px) rotate(5deg) scale(0.9); }
+            100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+        }
+
+        .music-notes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .note {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(168, 85, 247, 0.6);
+            animation: float-note 4s ease-in-out infinite;
+        }
+
+        @keyframes float-note {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Position notes */
+        .note:nth-child(1) { left: 20%; animation-delay: 0s; }
+        .note:nth-child(2) { left: 40%; animation-delay: 1s; }
+        .note:nth-child(3) { left: 60%; animation-delay: 2s; }
+        .note:nth-child(4) { left: 80%; animation-delay: 3s; }
+        
+        .login-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 600px;
+            max-height: 1900px;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+        }
+
+        .login-container h2 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(to right, #a855f7, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #a855f7, #3b82f6);
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+
+        .signup-container {
+    display: none;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 600px;
+    max-height: 1900px;
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+}
+
+.signup-container h2 {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(to right, #a855f7, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 1rem;
+    color: #e2e8f0;
+}
+
+.login-link a {
+    color: #a855f7;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+    color: #3b82f6;
+}
+
+        .signup-link {
+            text-align: center;
+            margin-top: 1rem;
+            color: #e2e8f0;
+        }
+
+        .signup-link a {
+            color: #a855f7;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: #3b82f6;
+        }
+
+        /* Animation for page transition */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="mood-overlay"></div>
+    
+    <div class="mood-bubbles">
+        <div class="mood-bubble">😊</div>
+        <div class="mood-bubble">🎮</div>
+        <div class="mood-bubble">🎵</div>
+        <div class="mood-bubble">📚</div>
+    </div>
+
+    <!--<div class="emoji-ring">
+        <div class="emoji">😄</div>
+        <div class="emoji">🎮</div>
+        <div class="emoji">🎵</div>
+        <div class="emoji">📚</div>
+        <div class="emoji">🎨</div>
+        <div class="emoji">⭐</div>
+    </div> -->
+
+    <div class="gaming-elements">
+        <div class="controller"></div>
+        <div class="headset"></div>
+    </div>
+
+    <div class="music-notes">
+        <div class="note">♪</div>
+        <div class="note">♫</div>
+        <div class="note">♬</div>
+        <div class="note">♪</div>
+    </div>
+
+    <div class="container">
+        <h1 class="logo">MOODIFY</h1>
+        <p class="tagline">TURN BOREDOM INTO PRODUCTIVE FUN</p>
+        <button class="cta-button" onclick="showLogin()">Get Started</button>
+    </div>
+
+    <!-- Login Page -->
+    <div class="login-page">
+        <div class="login-container">
+            <h2>Welcome Back</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="login-button">Login</button>
+            </form>
+            <div class="signup-link">
+                Don't have an account? <a href="#" onclick="showSignup()">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="signup-container">
+        <h2>Create Account</h2>
+        <form onsubmit="handleSignup(event)">
+            <div class="input-group">
+                <label for="signup-username">Username</label>
+                <input type="text" id="signup-username" required>
+            </div>
+            <div class="input-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" required>
+            </div>
+            <div class="input-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" required>
+            </div>
+            <button type="submit" class="login-button">Sign Up</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="#" onclick="showLogin()">Login</a>
+        </div>
+    </div>
+
+    <script>
+        function showLoginPage() {
+            document.querySelector('.container').classList.add('fade-out');
+            setTimeout(() => {
+                document.querySelector('.container').style.display = 'none';
+                document.querySelector('.login-page').style.display = 'flex';
+                document.querySelector('.login-page').classList.add('fade-in');
+            }, 500);
+        }
+
+        function showLogin() {
+            document.querySelector('.signup-container').style.display = 'none';
+            document.querySelector('.login-container').style.display = 'block';
+            document.querySelector('.login-page').style.display = 'flex';
+        }
+
+        function showSignup() {
+            document.querySelector('.login-container').style.display = 'none';
+            document.querySelector('.signup-container').style.display = 'block';
+            document.querySelector('.login-page').style.display = 'flex';
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            console.log('Login attempted with:', email);
+            // Add your login authentication logic here
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            console.log('Signup attempted with:', { username, email });
+            // Add your signup authentication logic here
+        }
+    </script>
+</body>
+</html>

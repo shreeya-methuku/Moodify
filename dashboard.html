@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Moodify</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a4a5e 0%, #1e1e7c 100%);
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            font-size: 1.2rem;
+        }
+
+        .nav-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .welcome-text {
+            font-size: 5rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #ffffff, #a8c0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-content p {
+            font-size: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+            margin-top: 2rem;
+        }
+
+        .card h1 {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+        }
+
+        .card p {
+            font-size: 2rem;
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .action-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #4a90e2, #67b8f7);
+            color: white;
+            padding: 1.5rem 3rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-button {
+            background: rgba(255, 77, 77, 0.2);
+            border: 1px solid rgba(255, 77, 77, 0.3);
+        }
+
+        .logout-button:hover {
+            background: rgba(255, 77, 77, 0.3);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="#" class="nav-button">Home</a>
+            <a href="#" class="nav-button">Analytics</a>
+            <a href="#" class="nav-button">Settings</a>
+        </div>
+        <div class="user-profile">
+            <span id="username-display"></span>
+            <div class="profile-icon">👤</div>
+            <a href="#" class="nav-button logout-button" onclick="handleLogout()">Logout</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="welcome-text">Welcome to Your Dashboard</h1>
+        <p>Track your mood and discover insights about yourself</p>
+        
+        <div class="card">
+            <h1>LETS GET STARTED</h1>
+            <p>Log your daily mood and activities to build a comprehensive emotional diary.</p>
+            <a href="#" class="action-button" onclick="handleDiveIn()">DIVE IN!!</a>
+        </div>
+    </main>
+
+    <script>
+        // Check if user is logged in
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Display username if available
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                document.getElementById('username-display').textContent = 
+                    user.username || user.email;
+            }
+        });
+
+        // Logout function
+        function handleLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Dive In function
+        function handleDiveIn() {
+            window.location.href = 'mood-tracker.html'; // Replace with your desired page
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Are You Feeling Today? - Moodify</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('mood.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .home-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .home-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            gap: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            font-size: 5rem;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            font-family: 'Arial Black', sans-serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .mood-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .mood-button {
+            background: rgba(139, 92, 246, 0.9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            text-transform: uppercase;
+            backdrop-filter: blur(5px);
+        }
+
+        .mood-button:hover {
+            transform: scale(1.05);
+        }
+
+        .next-button {
+            background: rgba(236, 72, 153, 0.9);
+            color: white;
+            border: none;
+            padding: 15px 60px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 2rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .next-button:hover {
+            transform: scale(1.05);
+        }
+
+        .arrow-icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <a href="dashboard.html" class="home-button">HOME</a>
+
+    <main class="main-content">
+        <h1 class="title">HOW ARE YOU<br>FEELING TODAY?</h1>
+
+        <div class="mood-buttons">
+            <button class="mood-button">Happy</button>
+            <button class="mood-button">Neutral</button>
+            <button class="mood-button">Not So Great</button>
+        </div>
+
+        <button class="next-button">
+            NEXT
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+    </main>
+
+    <script>
+        // Get references to all buttons
+        const moodButtons = document.querySelectorAll('.mood-button');
+        const nextButton = document.querySelector('.next-button');
+        let selectedMood = null;
+
+        // Add click event listeners to mood buttons
+        moodButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove selected state from all buttons
+                moodButtons.forEach(btn => {
+                    btn.style.background = 'rgba(139, 92, 246, 0.9)';
+                });
+                // Highlight selected button
+                button.style.background = 'rgba(109, 40, 217, 0.9)';
+                selectedMood = button.textContent;
+            });
+        });
+
+        // Add click event listener to next button
+        nextButton.addEventListener('click', () => {
+            if (selectedMood) {
+                // Store the selected mood
+                localStorage.setItem('currentMood', selectedMood);
+                // Redirect to the next page
+                window.location.href = 'activities.html';
+            } else {
+                alert('Please select a mood first');
+            }
+        });
+    </script>
+</body>
+</html>
